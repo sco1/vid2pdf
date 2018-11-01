@@ -6,6 +6,7 @@ from tkinter import filedialog
 import click
 from ffmpy import FFmpeg
 from PIL import Image
+from tqdm import tqdm
 
 
 def main_cli(input_video: Path = None):
@@ -58,13 +59,17 @@ def imgseries2pdf(
     If no output_dir is specified, the PDF is exported to input_dir
     """
     imgseries = sorted(input_dir.glob(image_format))
+
+    print(f"Loading {len(imgseries)} frames...")
     im = []
     baseim = Image.open(imgseries[0])
-    for img in imgseries[1:]:
+    for img in tqdm(imgseries[1:]):
         im.append(Image.open(img))
 
+    print("Generating PDF ... ", end="")
     out_filepath = output_dir / f"{pdf_filename}.pdf"
     baseim.save(out_filepath, "PDF", resolution=100.0, save_all=True, append_images=im)
+    print("done")
 
 
 def _get_ffmpeg_exe(startdir: Path = Path("./utils/ffmpeg")) -> Path:
