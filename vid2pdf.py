@@ -1,5 +1,7 @@
 import sys
+import tkinter as tk
 from pathlib import Path
+from tkinter import filedialog
 
 import click
 from ffmpy import FFmpeg
@@ -35,10 +37,13 @@ def main_cli(input_video: Path = None):
     if len(end_time) == 0:
         end_time = None
 
-    # TODO: Catch ffmpeg errors
-    _execffmpeg(_get_ffmpeg_exe(), input_video, output_dir, start_time, end_time)
-    # TODO: Catch PDF errors
-    imgseries2pdf(output_dir, default_output_dir)
+    # Create a separate directory for the frames
+    frames_dir = output_dir / "frames"
+    if not frames_dir.exists():
+        frames_dir.mkdir(exist_ok=True)
+    _execffmpeg(_get_ffmpeg_exe(), input_video, frames_dir, start_time, end_time)
+
+    imgseries2pdf(frames_dir, output_dir)
 
 
 def imgseries2pdf(
@@ -58,7 +63,7 @@ def imgseries2pdf(
     for img in imgseries[1:]:
         im.append(Image.open(img))
 
-    out_filepath = output_dir / f"{outfilename}.pdf"
+    out_filepath = output_dir / f"{pdf_filename}.pdf"
     baseim.save(out_filepath, "PDF", resolution=100.0, save_all=True, append_images=im)
 
 
@@ -96,14 +101,7 @@ def _execffmpeg(
         global_options.append(f"-to {end_time}")
 
     inputs = {str(input_video.resolve()): None}
-
-    # Create a separate directory for the frames
-    frames_dir = output_dir / "frames"
-    if not frames_dir.exists():
-        # TODO: Catch permissions error
-        frames_dir.mkdir(exist_ok=True)
-
-    outputs = {str((frames_dir / "frame%05d.png").resolve()): None}
+    outputs = {str((output_dir / "frame%05d.png").resolve()): None}
 
     ff = FFmpeg(
         str(ffmpeg_exe.resolve()),
@@ -124,4 +122,8 @@ if __name__ == "__main__":
     else:
         # Generate a Tk file selection dialog to select the input video file
         # Pass this path into main_cli()
-        raise NotImplementedError
+        root = tk.Tk()
+        root.withdraw()
+
+        input_video = Path(filedialog.askopenfilename(title="Select Video File"))
+        main_cli(input_video)
