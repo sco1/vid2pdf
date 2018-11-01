@@ -3,6 +3,7 @@ from pathlib import Path
 
 import click
 from ffmpy import FFmpeg
+from PIL import Image
 
 
 def main_cli(input_video: Path = None):
@@ -34,7 +35,31 @@ def main_cli(input_video: Path = None):
     if len(end_time) == 0:
         end_time = None
 
+    # TODO: Catch ffmpeg errors
     _execffmpeg(_get_ffmpeg_exe(), input_video, output_dir, start_time, end_time)
+    # TODO: Catch PDF errors
+    imgseries2pdf(output_dir, default_output_dir)
+
+
+def imgseries2pdf(
+    input_dir: Path,
+    output_dir: Path = None,
+    pdf_filename: str = "frames",
+    image_format: str = "*.png",
+):
+    """
+    Convert a series of images from input_dir to a PDF.
+
+    If no output_dir is specified, the PDF is exported to input_dir
+    """
+    imgseries = sorted(input_dir.glob(image_format))
+    im = []
+    baseim = Image.open(imgseries[0])
+    for img in imgseries[1:]:
+        im.append(Image.open(img))
+
+    out_filepath = output_dir / f"{outfilename}.pdf"
+    baseim.save(out_filepath, "PDF", resolution=100.0, save_all=True, append_images=im)
 
 
 def _get_ffmpeg_exe(startdir: Path = Path("./utils/ffmpeg")) -> Path:

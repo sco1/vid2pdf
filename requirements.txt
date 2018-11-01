@@ -1,2 +1,3 @@
 Click>=7.0
 ffmpy>=0.2
+Pillow>=5.3
