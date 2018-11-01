@@ -1,0 +1,2 @@
+# Don't track ffmpeg, but generate the folder as a placeholder
+/ffmpeg/*
