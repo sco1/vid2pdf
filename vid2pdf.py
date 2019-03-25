@@ -1,5 +1,6 @@
 import sys
 import tkinter as tk
+from collections import deque
 from pathlib import Path
 from tkinter import filedialog
 
@@ -17,9 +18,7 @@ def main_cli(input_video: Path = None):
         input_video = Path(click.prompt("Enter the video file path"))
 
     default_output_dir = input_video.parent
-    output_dir = Path(
-        click.prompt("Enter the output directory path", default=default_output_dir)
-    )
+    output_dir = Path(click.prompt("Enter the output directory path", default=default_output_dir))
 
     # Have to set default to "" over None in order for it to accept a blank input
     start_time = click.prompt(
@@ -44,7 +43,9 @@ def main_cli(input_video: Path = None):
         frames_dir.mkdir(exist_ok=True)
     _execffmpeg(_get_ffmpeg_exe(), input_video, frames_dir, start_time, end_time)
 
-    imgseries2pdf(frames_dir, output_dir)
+    imgseries2pdf(input_dir=frames_dir, output_dir=output_dir, pdf_filename=input_video.stem)
+
+    _cleandir(frames_dir)
 
 
 def imgseries2pdf(
@@ -109,12 +110,26 @@ def _execffmpeg(
     outputs = {str((output_dir / "frame%05d.png").resolve()): None}
 
     ff = FFmpeg(
-        str(ffmpeg_exe.resolve()),
-        global_options=global_options,
-        inputs=inputs,
-        outputs=outputs,
+        str(ffmpeg_exe.resolve()), global_options=global_options, inputs=inputs, outputs=outputs
     )
     ff.run()
+
+
+def _cleandir(root_directory: Path):
+    """
+    Recursively remove all files and subfolders in root_directory
+    """
+    dir_queue = deque()  # Queue directories since we can't delete them if non-empty
+    for item in root_directory.rglob("*"):
+        if item.is_dir():
+            dir_queue.append(item)
+        else:
+            item.unlink()
+
+    for item in dir_queue:
+        item.rmdir()
+
+    root_directory.rmdir()
 
 
 if __name__ == "__main__":
