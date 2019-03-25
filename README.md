@@ -9,7 +9,11 @@ If not using a precompiled build, Python must be installed on your local machine
 
 ## Installation
 
-Clone or download this repository to your local machine.
+Clone or download this repository to your local machine and install the requirements:
+
+```
+$ cd <project_dir>
+$ pip install -r requirements.txt
 
 Alternatively, prebuilt binaries are provided at https://github.com/sco1/vid2pdf/releases
 
