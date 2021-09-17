@@ -1,0 +1,35 @@
+ci:
+    skip: [flake8]
+
+repos:
+  - repo: https://github.com/psf/black
+    rev: 21.9b0
+    hooks:
+      - id: black
+  - repo: https://github.com/pycqa/isort
+    rev: 5.9.3
+    hooks:
+      - id: isort
+        name: isort
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.9.0
+    hooks:
+      -  id: python-check-blanket-noqa
+      -  id: python-check-blanket-type-ignore
+  - repo: local
+    hooks:
+      - id: flake8
+        name: Flake8
+        description: This hook runs flake8 within our project's poetry environment.
+        entry: poetry run flake8
+        language: python
+        types: [python]
+        require_serial: true

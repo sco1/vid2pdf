@@ -9,23 +9,31 @@ If not using a precompiled build, Python must be installed on your local machine
 
 ## Installation
 
-Clone or download this repository to your local machine and install the requirements:
+This project utilizes [`poetry`](https://python-poetry.org/) for dependency & environment management. Clone or download this repository to your local machine and create a new environment:
 
-```
+```bash
 $ cd <project_dir>
-$ pip install -r requirements.txt
+$ poetry install
+```
+
+Though it's recommended to utilize `poetry`, the project may also be installed via `pip`:
+
+```bash
+$ cd <project_dir>
+$ pip install .
+```
 
 Alternatively, prebuilt binaries are provided at https://github.com/sco1/vid2pdf/releases
 
 ## Usage
 
 `vid2pdf` can be invoked using Python:
-```
+```bash
 $ python vid2pdf.py
 ```
 
 Or, if a prebuilt binary is present, this may be called directly
-```
+```bash
 $ vid2pdf.exe
 ```
 
@@ -45,7 +53,7 @@ Video end time for capture, as `hh:mm:ss.sss`. If this value is not specified, t
 
 ### Examples
 
-```
+```bash
 $ python vid2pdf.py
 Enter the output directory path [X:\vid2pdf\test]:
 Enter start time (hh:mm:ss.sss). Leave blank to use the video start:
@@ -56,7 +64,7 @@ Loading 30 frames...
 Generating PDF ... done
 ```
 
-```
+```bash
 $ python vid2pdf.py -cli
 Enter the video file path: X:\vid2pdf\test\test_video.mp4
 Enter the output directory path [X:\vid2pdf\test]:
