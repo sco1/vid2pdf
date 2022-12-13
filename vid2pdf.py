@@ -1,18 +1,23 @@
 import sys
 import tkinter as tk
+import typing as t
 from collections import deque
 from pathlib import Path
 from tkinter import filedialog
 
 import click
-from ffmpy import FFmpeg
 from PIL import Image
+from ffmpy import FFmpeg
 from tqdm import tqdm
 
+FFMPEG_PATH = Path("./utils/ffmpeg")
 
-def main_cli(input_video: Path = None):
+
+def main_cli(input_video: t.Optional[Path] = None) -> None:
     """
-    Main CLI interface. Prompts user on the command line for the necessary inputs
+    Main CLI interface.
+
+    Prompts user on the command line for the necessary inputs
     """
     if not input_video:
         input_video = Path(click.prompt("Enter the video file path"))
@@ -41,7 +46,12 @@ def main_cli(input_video: Path = None):
     frames_dir = output_dir / "frames"
     if not frames_dir.exists():
         frames_dir.mkdir(exist_ok=True)
-    _execffmpeg(_get_ffmpeg_exe(), input_video, frames_dir, start_time, end_time)
+
+    ffmpeg_path = _get_ffmpeg_exe()
+    if not ffmpeg_path:
+        raise FileNotFoundError(f"Could not find ffmpeg executable. Please add to: '{FFMPEG_PATH}'")
+
+    _execffmpeg(ffmpeg_path, input_video, frames_dir, start_time, end_time)
 
     imgseries2pdf(input_dir=frames_dir, output_dir=output_dir, pdf_filename=input_video.stem)
 
@@ -50,14 +60,14 @@ def main_cli(input_video: Path = None):
 
 def imgseries2pdf(
     input_dir: Path,
-    output_dir: Path = None,
+    output_dir: Path,
     pdf_filename: str = "frames",
     image_format: str = "*.png",
-):
+) -> None:
     """
-    Convert a series of images from input_dir to a PDF.
+    Convert a series of images from `input_dir` to a PDF in the specified output directory.
 
-    If no output_dir is specified, the PDF is exported to input_dir
+    If no `output_dir` is specified, the PDF is exported to `input_dir`
     """
     imgseries = sorted(input_dir.glob(image_format))
 
@@ -73,9 +83,9 @@ def imgseries2pdf(
     print("done")
 
 
-def _get_ffmpeg_exe(startdir: Path = Path("./utils/ffmpeg")) -> Path:
+def _get_ffmpeg_exe(startdir: Path = FFMPEG_PATH) -> t.Optional[Path]:
     """
-    Recursively search startdir for the project's ffmpeg.exe
+    Recursively search, starting from `startdir`, for the project's `ffmpeg.exe`.
 
     Returns a pathlib.Path object if ffmpeg.exe is found. If multiple executables
     are found, the first is returned
@@ -93,12 +103,10 @@ def _execffmpeg(
     ffmpeg_exe: Path,
     input_video: Path,
     output_dir: Path,
-    start_time: str = None,
-    end_time: str = None,
-):
-    """
-    Execute ffmpeg with the specified inputs
-    """
+    start_time: t.Optional[str] = None,
+    end_time: t.Optional[str] = None,
+) -> None:
+    """Execute ffmpeg with the specified inputs."""
     global_options = ["-hide_banner"]
     if start_time:
         global_options.append(f"-ss {start_time}")
@@ -107,7 +115,7 @@ def _execffmpeg(
         global_options.append(f"-to {end_time}")
 
     inputs = {str(input_video.resolve()): None}
-    outputs = {str((output_dir / "frame%05d.png").resolve()): None}
+    outputs = {str((output_dir / r"frame%05d.png").resolve()): None}
 
     ff = FFmpeg(
         str(ffmpeg_exe.resolve()), global_options=global_options, inputs=inputs, outputs=outputs
@@ -115,11 +123,9 @@ def _execffmpeg(
     ff.run()
 
 
-def _cleandir(root_directory: Path):
-    """
-    Recursively remove all files and subfolders in root_directory
-    """
-    dir_queue = deque()  # Queue directories since we can't delete them if non-empty
+def _cleandir(root_directory: Path) -> None:
+    """Recursively remove all files and subfolders in `root_directory`."""
+    dir_queue: deque = deque()  # Queue directories since we can't delete them if non-empty
     for item in root_directory.rglob("*"):
         if item.is_dir():
             dir_queue.append(item)

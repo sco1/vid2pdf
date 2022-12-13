@@ -1,0 +1,70 @@
+[tool.poetry]
+name = "vid2pdf"
+version = "1.1.0"
+description = "Simple helper utility to convert a video file to PDF image series"
+authors = ["sco1 <sco1.git@gmail.com>"]
+
+readme = "README.md"
+homepage = "https://github.com/sco1/"
+repository = "https://github.com/sco1/vid2pdf"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Typing :: Typed",
+]
+
+[tool.poetry.scripts]
+vid2pdf = "vid2pdf:main_cli"
+
+[tool.poetry.dependencies]
+python = "^3.8.1"
+click = "^8.1"
+ffmpy = "^0.3"
+tqdm = "^4.62"
+Pillow = "^9.0"
+
+[tool.poetry.dev-dependencies]
+black = "^22.10"
+bump2version = "^1.0"
+flake8 = "^6.0"
+flake8-annotations = "^2.9"
+flake8-bugbear = "^22.10"
+flake8-docstrings = "^1.6"
+flake8-fixme = "^1.1"
+isort = "^5.10"
+mypy = "^0.991"
+pep8-naming = "^0.13"
+pre-commit = "^2.20"
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+case_sensitive = true
+no_lines_before = "LOCALFOLDER"
+order_by_type = false
+profile = "black"
+
+[tool.mypy]
+disallow_incomplete_defs = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+no_implicit_optional = true
+show_error_codes = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[build-system]
+requires = ["poetry-core>=1.2"]
+build-backend = "poetry.core.masonry.api"

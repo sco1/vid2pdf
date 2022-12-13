@@ -1,18 +1,47 @@
-# Virtualenvs
-.venv/
-
-# IDE/Cache
+# Byte-compiled / optimized / DLL files
 __pycache__/
-.vscode/
+*.py[cod]
+*$py.class
 
-# Builds
-*.egg-info
+# Packaging
+*.egg-info/
 build/
 dist/
 *.spec
 
-# Test data
-test/
-
 # Jupyter
-*.ipynb*
+.ipynb_checkpoints
+*.ipynb
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.python-version
+
+# jetbrains
+.idea/
+.DS_Store
+
+# vscode
+.vscode
+
+# logs
+*.log
+test-*.xml
+
+# Unit test / coverage reports
+.coverage
+.tox
+.coverage.*
+coverage.xml
+cov.xml
+htmlcov
+.pytest_cache/
+
+# mypy
+.mypy_cache/

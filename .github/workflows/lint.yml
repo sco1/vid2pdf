@@ -1,0 +1,30 @@
+name: lint
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - "**"  # Skip re-linting when tags are added
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install -U pip setuptools importlib-metadata
+        pip install poetry
+        poetry install
+
+    - name: Run mypy
+      run: poetry run mypy .
+      if: always()
