@@ -151,5 +151,5 @@ if __name__ == "__main__":
         root = tk.Tk()
         root.withdraw()
 
-        input_video = Path(filedialog.askopenfilename(title="Select Video File"))  # type: ignore[no-untyped-call]  # noqa: E501
+        input_video = Path(filedialog.askopenfilename(title="Select Video File"))
         main_cli(input_video)

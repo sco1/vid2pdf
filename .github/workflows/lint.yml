@@ -9,13 +9,13 @@ on:
       - "**"  # Skip re-linting when tags are added
 
 jobs:
-  lint:  # Additional linting done by pre-commit.ci
+  lint:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: '3.x'
 
@@ -24,9 +24,6 @@ jobs:
         python -m pip install -U pip setuptools importlib-metadata
         pip install poetry
         poetry install
-
-    - name: Run flake8
-      run: poetry run flake8 .
 
     - name: Run mypy
       run: poetry run mypy .
