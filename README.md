@@ -1,26 +1,20 @@
 # vid2pdf
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/vid2pdf/1.1.0?logo=python&logoColor=FFD43B)](https://pypi.org/project/vid2pdf/)
+[![PyPI](https://img.shields.io/pypi/v/vid2pdf?logo=Python&logoColor=FFD43B)](https://pypi.org/project/vid2pdf/)
+[![PyPI - License](https://img.shields.io/pypi/l/vid2pdf?color=magenta)](https://github.com/sco1/vid2pdf/blob/main/LICENSE)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/vid2pdf/main.svg)](https://results.pre-commit.ci/latest/github/sco1/vid2pdf/main)
+[![Open in Visual Studio Code](https://img.shields.io/badge/Open%20in-VSCode.dev-blue)](https://github.dev/sco1/vid2pdf)
+
 Simple helper utility to convert a video file to PDF image series
 
 ## External Requirements
-
 `vid2pdf` requires ffmpeg to be extracted to the `/utils/ffmpeg` folder. The latest version of ffmpeg can be downloaded from [ffmpeg.org](https://www.ffmpeg.org/download.html). Existing local ffmpeg installations are not currently supported.
 
-If not using a precompiled build, Python must be installed on your local machine. You can download the latest version of Python for your OS from [python.org](https://www.python.org/downloads/)
-
 ## Installation
-
-This project utilizes [`poetry`](https://python-poetry.org/) for dependency & environment management. Clone or download this repository to your local machine and create a new environment:
-
-```bash
-$ cd <project_dir>
-$ poetry install
-```
-
-Though it's recommended to utilize `poetry`, the project may also be installed via `pip`:
+Install from PyPi with your favorite `pip` invocation:
 
 ```bash
-$ cd <project_dir>
-$ pip install .
+$ pip install vid2pdf
 ```
 
 Alternatively, prebuilt binaries are provided at https://github.com/sco1/vid2pdf/releases

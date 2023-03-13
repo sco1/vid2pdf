@@ -14,10 +14,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Install Poetry for caching
+      run: pipx install poetry
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.x'
+        cache: 'poetry'
 
     - name: Install dependencies
       run: |
