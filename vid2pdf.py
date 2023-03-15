@@ -85,13 +85,20 @@ def imgseries2pdf(
 
 def _get_ffmpeg_exe(startdir: Path = FFMPEG_PATH) -> t.Optional[Path]:
     """
-    Recursively search, starting from `startdir`, for the project's `ffmpeg.exe`.
+    Recursively search, starting from `startdir`, for the project's FFmpeg executable.
 
-    Returns a pathlib.Path object if ffmpeg.exe is found. If multiple executables
-    are found, the first is returned
+    NOTE: On Windows, `ffmpeg.exe` is searched for. On unix-likes, `ffmpeg` is searched for instead.
+    This search is case-sensitive on case-sensitive operating systems (i.e. not-Windows)
+
+    NOTE: If multiple executables are found below the provided starting directory, the first
+    executable encountered is returned.
     """
-    pattern = "**/ffmpeg.exe"
-    ffmpeg_exe = list(startdir.glob(pattern))
+    if sys.platform == "win32":
+        pattern = "**/ffmpeg.exe"
+    else:
+        pattern = "**/ffmpeg"
+
+    ffmpeg_exe = [filepath for filepath in startdir.glob(pattern) if filepath.is_file()]
 
     if ffmpeg_exe:
         return ffmpeg_exe[0]
@@ -125,7 +132,7 @@ def _execffmpeg(
 
 def _cleandir(root_directory: Path) -> None:
     """Recursively remove all files and subfolders in `root_directory`."""
-    dir_queue: deque = deque()  # Queue directories since we can't delete them if non-empty
+    dir_queue: deque[Path] = deque()  # Queue directories since we can't delete them if non-empty
     for item in root_directory.rglob("*"):
         if item.is_dir():
             dir_queue.append(item)

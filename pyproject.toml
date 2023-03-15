@@ -28,8 +28,8 @@ vid2pdf = "vid2pdf:main_cli"
 python = "^3.8.1"
 click = "^8.1"
 ffmpy = "^0.3"
-tqdm = "^4.62"
 Pillow = "^9.0"
+tqdm = "^4.62"
 
 [tool.poetry.dev-dependencies]
 black = "^23.1"
