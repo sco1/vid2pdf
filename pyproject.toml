@@ -1,55 +1,66 @@
-[tool.poetry]
+[project]
 name = "vid2pdf"
 version = "1.1.0"
 description = "Simple helper utility to convert a video file to PDF image series"
-authors = ["sco1 <sco1.git@gmail.com>"]
+authors = [
+    {name = "sco1", email = "sco1.git@gmail.com"}
+]
+maintainers = [
+    {name = "sco1", email = "sco1.git@gmail.com"}
+]
 
 readme = "README.md"
-homepage = "https://github.com/sco1/"
-repository = "https://github.com/sco1/vid2pdf"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Typing :: Typed",
 ]
 
-[tool.poetry.scripts]
+requires-python = ">=3.11"
+dependencies = [
+    "click~=8.1",
+    "ffmpy~=0.5",
+    "pillow~=11.0",
+    "tqdm~=4.67",
+]
+
+[project.urls]
+Homepage = "https://github.com/sco1/"
+Documentation = "https://github.com/sco1/vid2pdf/blob/main/README.md"
+Repository = "https://github.com/sco1/vid2pdf"
+Issues = "https://github.com/sco1/vid2pdf/issues"
+
+[project.scripts]
 vid2pdf = "vid2pdf:main_cli"
 
-[tool.poetry.dependencies]
-python = "^3.8.1"
-click = "^8.1"
-ffmpy = "^0.3"
-Pillow = "^10.0.1"
-tqdm = "^4.62"
-
-[tool.poetry.dev-dependencies]
-black = "^23.1"
-bump2version = "^1.0"
-flake8 = "^6.0"
-flake8-annotations = "^3.0"
-isort = "^5.12"
-mypy = "^1.0"
-pep8-naming = "^0.13"
-pre-commit = "^3.0"
-ruff = "^0.3"
+[tool.uv]
+dev-dependencies = [
+    "black~=24.10",
+    "flake8~=7.1",
+    "flake8-annotations~=3.1",
+    "isort~=5.13",
+    "mypy~=1.14",
+    "pre-commit~=4.0",
+    "ruff~=0.9",
+    "sco1-bumper~=1.0",
+]
 
 [tool.black]
 line-length = 100
 
 [tool.isort]
 case_sensitive = true
+known_first_party = "vid2pdf,tests"
 no_lines_before = "LOCALFOLDER"
 order_by_type = false
 profile = "black"
+line_length = 100
 
 [tool.mypy]
 disallow_incomplete_defs = true
@@ -65,5 +76,5 @@ warn_unused_configs = true
 warn_unused_ignores = true
 
 [build-system]
-requires = ["poetry-core>=1.2"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"

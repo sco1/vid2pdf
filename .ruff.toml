@@ -11,8 +11,9 @@ extend-exclude = [
 select = [
     "B",    # flake8-bugbear
     "C4",   # flake8-comprehensions
-    "FIX",  # flake8-fixme
     "D",    # pydocstyle/flake8-docstrings
+    "F",    # Pyflakes
+    "FIX",  # flake8-fixme
     "N",    # pep8-naming
 ]
 
@@ -47,12 +48,10 @@ ignore = [
     "N802",
     "N806",
     "N815",
-    # ruff
-    "N999",
 ]
 
 [lint.per-file-ignores]
-"test_*.py" = [
+"tests/test_*.py" = [
     "D101",
     "D103",
 ]
