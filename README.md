@@ -3,7 +3,6 @@
 [![PyPI](https://img.shields.io/pypi/v/vid2pdf?logo=Python&logoColor=FFD43B)](https://pypi.org/project/vid2pdf/)
 [![PyPI - License](https://img.shields.io/pypi/l/vid2pdf?color=magenta)](https://github.com/sco1/vid2pdf/blob/main/LICENSE)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/vid2pdf/main.svg)](https://results.pre-commit.ci/latest/github/sco1/vid2pdf/main)
-[![Open in Visual Studio Code](https://img.shields.io/badge/Open%20in-VSCode.dev-blue)](https://github.dev/sco1/vid2pdf)
 
 Simple helper utility to convert a video file to PDF image series
 
