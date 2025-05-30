@@ -25,6 +25,7 @@ dependencies = [
     "click~=8.1",
     "ffmpy~=0.5",
     "pillow~=11.0",
+    "python-dotenv~=1.1",
     "tqdm~=4.67",
 ]
 
@@ -33,6 +34,7 @@ Homepage = "https://github.com/sco1/"
 Documentation = "https://github.com/sco1/vid2pdf/blob/main/README.md"
 Repository = "https://github.com/sco1/vid2pdf.git"
 Issues = "https://github.com/sco1/vid2pdf/issues"
+Changelog = "https://github.com/sco1/vid2pdf/blob/main/CHANGELOG.md"
 
 [project.scripts]
 vid2pdf = "vid2pdf:main_cli"
@@ -46,7 +48,7 @@ dev-dependencies = [
     "mypy~=1.14",
     "pre-commit~=4.0",
     "ruff~=0.9",
-    "sco1-bumper~=1.0",
+    "sco1-bumper~=2.0",
 ]
 
 [tool.black]

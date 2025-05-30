@@ -1,19 +1,21 @@
+import os
 import sys
 import tkinter as tk
-import typing as t
 from collections import deque
 from pathlib import Path
 from tkinter import filedialog
 
 import click
 from PIL import Image
+from dotenv import load_dotenv
 from ffmpy import FFmpeg
 from tqdm import tqdm
 
-FFMPEG_PATH = Path("./utils/ffmpeg")
+load_dotenv()
+FFMPEG_PATH = Path(os.environ.get("FFMPEG_PATH", "./utils/ffmpeg"))
 
 
-def main_cli(input_video: t.Optional[Path] = None) -> None:
+def main_cli(input_video: Path | None = None) -> None:
     """
     Main CLI interface.
 
@@ -83,7 +85,7 @@ def imgseries2pdf(
     print("done")
 
 
-def _get_ffmpeg_exe(startdir: Path = FFMPEG_PATH) -> t.Optional[Path]:
+def _get_ffmpeg_exe(startdir: Path = FFMPEG_PATH) -> Path | None:
     """
     Recursively search, starting from `startdir`, for the project's FFmpeg executable.
 
@@ -110,8 +112,8 @@ def _execffmpeg(
     ffmpeg_exe: Path,
     input_video: Path,
     output_dir: Path,
-    start_time: t.Optional[str] = None,
-    end_time: t.Optional[str] = None,
+    start_time: str | None = None,
+    end_time: str | None = None,
 ) -> None:
     """Execute ffmpeg with the specified inputs."""
     global_options = ["-hide_banner"]

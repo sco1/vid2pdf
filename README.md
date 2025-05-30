@@ -7,7 +7,9 @@
 Simple helper utility to convert a video file to PDF image series
 
 ## External Requirements
-`vid2pdf` requires ffmpeg to be extracted to the `/utils/ffmpeg` folder. The latest version of ffmpeg can be downloaded from [ffmpeg.org](https://www.ffmpeg.org/download.html). Existing local ffmpeg installations are not currently supported.
+`vid2pdf` requires ffmpeg to be extracted to the `/utils/ffmpeg` folder. The latest version of ffmpeg can be downloaded from [ffmpeg.org](https://www.ffmpeg.org/download.html).
+
+The path to an existing ffmpeg installation can also be specified using an `FFMPEG_PATH` environment variable, either directly or by utilizing a `.env` file in this project's root.
 
 ## Installation
 Install from PyPi with your favorite `pip` invocation:
@@ -16,18 +18,10 @@ Install from PyPi with your favorite `pip` invocation:
 $ pip install vid2pdf
 ```
 
-Alternatively, prebuilt binaries are provided at https://github.com/sco1/vid2pdf/releases
-
 ## Usage
-
 `vid2pdf` can be invoked using Python:
 ```bash
 $ python vid2pdf.py
-```
-
-Or, if a prebuilt binary is present, this may be called directly
-```bash
-$ vid2pdf.exe
 ```
 
 ### Input Parameters
