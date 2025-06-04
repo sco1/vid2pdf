@@ -12,6 +12,7 @@ Simple helper utility to convert a video file to PDF image series
 The path to an existing ffmpeg installation can also be specified using an `FFMPEG_PATH` environment variable, either directly or by utilizing a `.env` file in this project's root.
 
 ## Installation
+### Python
 Install from PyPi with your favorite `pip` invocation:
 
 ```bash
@@ -23,6 +24,13 @@ $ pip install vid2pdf
 ```bash
 $ python vid2pdf.py
 ```
+
+### Standalone
+Standalone distribution using [Nuitka](https://github.com/Nuitka/Nuitka) are explicitly targeted by this package.
+
+Currently tested packaging paths are:
+  * `python -m nuitka vid2pdf.py --mode=standalone --enable-plugin=tk-inter`
+  * `python -m nuitka vid2pdf.py --mode=onefile --enable-plugin=tk-inter`
 
 ### Input Parameters
 Unless otherwise noted, all input parameters are prompted in the CLI
