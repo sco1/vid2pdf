@@ -1,13 +1,7 @@
 [flake8]
-max-line-length=100
-import-order-style=pycharm
-application-import-names=vid2pdf,tests
 extend-ignore=
-    # pycodestyle
-    E203,E226,E701
+    E,F,W,
     # flake8-annotations
     ANN002,ANN003,ANN101,ANN102,ANN204,ANN206,
 extend-exclude=
     .venv,
-per-file-ignores =
-    tests/test_*.py:E501,

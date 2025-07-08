@@ -18,23 +18,23 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install uv
-      uses: astral-sh/setup-uv@v6
-      with:
-        version: "0.7.x"
-        enable-cache: true
-        cache-dependency-glob: "uv.lock"
-
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version-file: "pyproject.toml"
 
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: "0.8.x"
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
     - name: Build package
       run: uv build
 
     - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1.12
+      uses: pypa/gh-action-pypi-publish@release/v1.13
       with:
         print-hash: true
 
