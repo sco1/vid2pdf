@@ -12,13 +12,14 @@ repos:
       - id: isort
         name: isort
   - repo: https://github.com/pycqa/flake8
-    rev: 7.2.0
+    rev: 7.3.0
     hooks:
       - id: flake8
         additional_dependencies:
           - flake8-annotations
+          - flake8-define-class-attributes
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-case-conflict
       - id: check-json
@@ -35,6 +36,6 @@ repos:
       -  id: python-check-blanket-type-ignore
       -  id: python-use-type-annotations
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.4
+    rev: v0.13.0
     hooks:
-      - id: ruff
+      - id: ruff-check

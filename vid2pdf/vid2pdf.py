@@ -1,60 +1,60 @@
+import os
 import sys
-import tkinter as tk
-import typing as t
 from collections import deque
 from pathlib import Path
-from tkinter import filedialog
 
-import click
+import typer
 from PIL import Image
+from dotenv import load_dotenv
 from ffmpy import FFmpeg
 from tqdm import tqdm
 
-FFMPEG_PATH = Path("./utils/ffmpeg")
+from vid2pdf.dialog import prompt_for_file
+
+load_dotenv()
+UTIL_BASE = Path(__file__).parent / "utils"
+FFMPEG_PATH = Path(os.environ.get("FFMPEG_PATH", UTIL_BASE / "ffmpeg"))
+
+CWD = Path()
 
 
-def main_cli(input_video: t.Optional[Path] = None) -> None:
+vid2pdf_cli = typer.Typer(
+    no_args_is_help=True,
+    add_completion=False,
+)
+
+
+@vid2pdf_cli.command()
+def main_cli(
+    source: Path | None = typer.Argument(None, dir_okay=False, help="Source video"),
+    dest: Path | None = typer.Option(None, file_okay=False, help="Destination directory"),
+    start: str | None = typer.Option(None, "-s", "--start", help="Start time (hh:mm:ss.sss)"),
+    end: str | None = typer.Option(None, "-e", "--end", help="End time (hh:mm:ss.sss)"),
+) -> None:
     """
-    Main CLI interface.
+    Convert a video file to PDF image series.
 
-    Prompts user on the command line for the necessary inputs
+    If an input video is not specified, a file selection dialog will be opened to select the file to
+    process.
+
+    Start and end arguments may be left empty to use the start and end of the video, respectively.
     """
-    if not input_video:
-        input_video = Path(click.prompt("Enter the video file path"))
-
-    default_output_dir = input_video.parent
-    output_dir = Path(click.prompt("Enter the output directory path", default=default_output_dir))
-
-    # Have to set default to "" over None in order for it to accept a blank input
-    start_time = click.prompt(
-        "Enter start time (hh:mm:ss.sss). Leave blank to use the video start",
-        default="",
-        show_default=False,
-    )
-    if len(start_time) == 0:
-        start_time = None
-
-    end_time = click.prompt(
-        "Enter end time (hh:mm:ss.sss). Leave blank to use the video end",
-        default="",
-        show_default=False,
-    )
-    if len(end_time) == 0:
-        end_time = None
+    if not source:
+        source = prompt_for_file("Select Source Video File")
 
     # Create a separate directory for the frames
-    frames_dir = output_dir / "frames"
-    if not frames_dir.exists():
-        frames_dir.mkdir(exist_ok=True)
+    if not dest:
+        dest = source.parent
+
+    frames_dir = dest / "frames"
+    frames_dir.mkdir(parents=True, exist_ok=True)
 
     ffmpeg_path = _get_ffmpeg_exe()
     if not ffmpeg_path:
         raise FileNotFoundError(f"Could not find ffmpeg executable. Please add to: '{FFMPEG_PATH}'")
 
-    _execffmpeg(ffmpeg_path, input_video, frames_dir, start_time, end_time)
-
-    imgseries2pdf(input_dir=frames_dir, output_dir=output_dir, pdf_filename=input_video.stem)
-
+    _execffmpeg(ffmpeg_path, source, frames_dir, start, end)
+    imgseries2pdf(input_dir=frames_dir, output_dir=dest, pdf_filename=source.stem)
     _cleandir(frames_dir)
 
 
@@ -83,7 +83,7 @@ def imgseries2pdf(
     print("done")
 
 
-def _get_ffmpeg_exe(startdir: Path = FFMPEG_PATH) -> t.Optional[Path]:
+def _get_ffmpeg_exe(startdir: Path = FFMPEG_PATH) -> Path | None:
     """
     Recursively search, starting from `startdir`, for the project's FFmpeg executable.
 
@@ -108,10 +108,10 @@ def _get_ffmpeg_exe(startdir: Path = FFMPEG_PATH) -> t.Optional[Path]:
 
 def _execffmpeg(
     ffmpeg_exe: Path,
-    input_video: Path,
+    source: Path,
     output_dir: Path,
-    start_time: t.Optional[str] = None,
-    end_time: t.Optional[str] = None,
+    start_time: str | None = None,
+    end_time: str | None = None,
 ) -> None:
     """Execute ffmpeg with the specified inputs."""
     global_options = ["-hide_banner"]
@@ -121,7 +121,7 @@ def _execffmpeg(
     if end_time:
         global_options.append(f"-to {end_time}")
 
-    inputs = {str(input_video.resolve()): None}
+    inputs = {str(source.resolve()): None}
     outputs = {str((output_dir / r"frame%05d.png").resolve()): None}
 
     ff = FFmpeg(
@@ -146,17 +146,4 @@ def _cleandir(root_directory: Path) -> None:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        # Main CLI interface w/CLI prompt for input video
-        if sys.argv[1].lower() == "-cli":
-            main_cli()
-        else:
-            raise NotImplementedError
-    else:
-        # Generate a Tk file selection dialog to select the input video file
-        # Pass this path into main_cli()
-        root = tk.Tk()
-        root.withdraw()
-
-        input_video = Path(filedialog.askopenfilename(title="Select Video File"))
-        main_cli(input_video)
+    vid2pdf_cli()

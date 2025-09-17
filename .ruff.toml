@@ -12,9 +12,11 @@ select = [
     "B",    # flake8-bugbear
     "C4",   # flake8-comprehensions
     "D",    # pydocstyle/flake8-docstrings
+    "E",    # pycodestyle
     "F",    # Pyflakes
     "FIX",  # flake8-fixme
     "N",    # pep8-naming
+    "W",    # pycodestyle
 ]
 
 ignore = [
@@ -50,8 +52,9 @@ ignore = [
     "N815",
 ]
 
-[lint.per-file-ignores]
-"tests/test_*.py" = [
-    "D101",
-    "D103",
+[lint.flake8-bugbear]
+extend-immutable-calls = [
+    # Typer CLI
+    "typer.Option",
+    "typer.Argument",
 ]
