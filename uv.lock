@@ -61,6 +61,15 @@ wheels = [
 ]
 
 [[package]]
+name = "cogapp"
+version = "3.5.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/27/04/395d2067e7cb2e0c847dad74ef6048ce9cdf2c77c7add3805485455ac288/cogapp-3.5.1.tar.gz", hash = "sha256:a9e8b8c31e5e47de722f27eaba1ec128dd6c8e7b6015555d9c8edaa5ad6092b4", size = 59428, upload-time = "2025-06-10T12:42:39.607Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4c/dd/563b4d1c7446fb64c264ed74a637512fdfa451a44cae7d002e5623d15de8/cogapp-3.5.1-py3-none-any.whl", hash = "sha256:c14b906ff4d0386735c2d8022ce3d582bf0ec3215a66e9bbb2019e9b4230f413", size = 30390, upload-time = "2025-06-10T12:42:38.203Z" },
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -485,16 +494,17 @@ name = "vid2pdf"
 version = "1.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "click" },
     { name = "ffmpy" },
     { name = "pillow" },
     { name = "python-dotenv" },
     { name = "tqdm" },
+    { name = "typer-slim" },
 ]
 
 [package.dev-dependencies]
 dev = [
     { name = "black" },
+    { name = "cogapp" },
     { name = "flake8" },
     { name = "flake8-annotations" },
     { name = "flake8-define-class-attributes" },
@@ -507,16 +517,17 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "click", specifier = "~=8.1" },
     { name = "ffmpy", specifier = "~=0.5" },
     { name = "pillow", specifier = "~=11.0" },
     { name = "python-dotenv", specifier = "~=1.1" },
     { name = "tqdm", specifier = "~=4.67" },
+    { name = "typer-slim", specifier = "~=0.17" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "black", specifier = "~=25.0" },
+    { name = "cogapp", specifier = "~=3.5" },
     { name = "flake8", specifier = "~=7.1" },
     { name = "flake8-annotations", specifier = "~=3.1" },
     { name = "flake8-define-class-attributes", specifier = "~=0.2" },
