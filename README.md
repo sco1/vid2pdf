@@ -3,7 +3,7 @@
 </p>
 <h1 align="center"> vid2pdf </h1>
 
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/vid2pdf/1.1.0?logo=python&logoColor=FFD43B)](https://pypi.org/project/vid2pdf/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/vid2pdf/1.2.0?logo=python&logoColor=FFD43B)](https://pypi.org/project/vid2pdf/)
 [![PyPI](https://img.shields.io/pypi/v/vid2pdf?logo=Python&logoColor=FFD43B)](https://pypi.org/project/vid2pdf/)
 [![PyPI - License](https://img.shields.io/pypi/l/vid2pdf?color=magenta)](https://github.com/sco1/vid2pdf/blob/main/LICENSE)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/vid2pdf/main.svg)](https://results.pre-commit.ci/latest/github/sco1/vid2pdf/main)
@@ -63,3 +63,5 @@ Note that Nuitka is provided as an optional dependency and can be installed by s
 Currently tested packaging paths are:
   * `python -m nuitka ./vid2pdf/vid2pdf.py --mode=standalone --enable-plugin=tk-inter`
   * `python -m nuitka ./vid2pdf/vid2pdf.py --mode=onefile --enable-plugin=tk-inter`
+
+For an alternative standalone option, I also maintain a UI-based Flutter version of `vid2pdf` at [sco1/vid2pdf-flutter](https://github.com/sco1/vid2pdf-flutter)

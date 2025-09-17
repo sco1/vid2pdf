@@ -1,5 +1,5 @@
 [tool.bumper]
-current_version = "1.1.0"
+current_version = "1.2.0"
 versioning_type = "semver"
 
 [[tool.bumper.files]]
@@ -8,4 +8,4 @@ search = 'version = "{current_version}"'
 
 [[tool.bumper.files]]
 file = "./README.md"
-search = "pyflysight/{current_version}"
+search = "vid2pdf/{current_version}"
