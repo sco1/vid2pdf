@@ -27,7 +27,7 @@ You can confirm proper installation via the `vid2pdf` CLI:
 <!-- [[[cog
 import cog
 from subprocess import PIPE, run
-out = run(["vid2pdf", "--help"], stdout=PIPE, encoding="ascii")
+out = run(["vid2pdf", "--help"], stdout=PIPE, encoding="ascii", env={"TYPER_USE_RICH": "0"})
 cog.out(
     f"```\n$ vid2pdf --help\n{out.stdout.rstrip()}\n```"
 )
