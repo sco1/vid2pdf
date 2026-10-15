@@ -48,7 +48,7 @@ dev = [
     "flake8~=7.1",
     "flake8-annotations~=3.1",
     "flake8-define-class-attributes~=0.2",
-    "isort~=8.0",
+    "isort~=9.0",
     "mypy~=2.2",
     "pre-commit~=4.0",
     "ruff~=0.9",
@@ -90,5 +90,5 @@ module-name = "vid2pdf"
 module-root = ""
 
 [build-system]
-requires = ["uv_build>=0.11.2,<0.12"]
+requires = ["uv_build>=0.13.0,<0.14"]
 build-backend = "uv_build"
