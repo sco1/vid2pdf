@@ -6,10 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<ma
 * `FFMPEG_PATH` may now point directly to the FFmpeg executable, in addition to a directory containing it
 * FFmpeg executable is now searched on the system's `PATH` if it is not found at `FFMPEG_PATH` or the default `/utils/ffmpeg` location
 
+### Changed
+* Common failures (missing ffmpeg, no file selected, no frames extracted) now exit with an error message rather than a traceback
+
 ### Fixed
 * Fix default `/utils/ffmpeg` location resolving relative to the package directory rather than the project root
 * Intermediate frames are now written to a uniquely named temporary directory, rather than `<dest>/frames`
 * Intermediate frames are now cleaned up if conversion fails
+* The Tk root window is now closed once the file selection dialog is dismissed
 
 ## [v1.2.0]
 ### Added

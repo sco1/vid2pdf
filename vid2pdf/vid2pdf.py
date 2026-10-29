@@ -2,6 +2,7 @@ import os
 import shutil
 import sys
 import tempfile
+import typing as t
 from pathlib import Path
 
 import typer
@@ -15,8 +16,6 @@ from vid2pdf.dialog import prompt_for_file
 load_dotenv()
 UTIL_BASE = Path(__file__).parent.parent / "utils"
 FFMPEG_PATH = Path(os.environ.get("FFMPEG_PATH", UTIL_BASE / "ffmpeg"))
-
-CWD = Path()
 
 
 vid2pdf_cli = typer.Typer(
@@ -41,13 +40,14 @@ def main_cli(
     Start and end arguments may be left empty to use the start and end of the video, respectively.
     """
     if not source:
-        source = prompt_for_file("Select Source Video File")
+        try:
+            source = prompt_for_file("Select Source Video File")
+        except ValueError:
+            _abort("No source video selected.")
 
     ffmpeg_path = _get_ffmpeg_exe()
     if not ffmpeg_path:
-        raise FileNotFoundError(
-            f"Could not find ffmpeg executable. Please add to: '{FFMPEG_PATH}' or your PATH"
-        )
+        _abort(f"Could not find ffmpeg executable. Please add to: '{FFMPEG_PATH}' or your PATH")
 
     if not dest:
         dest = source.parent
@@ -58,7 +58,16 @@ def main_cli(
     with tempfile.TemporaryDirectory(prefix=".vid2pdf-frames-", dir=dest) as tmp:
         frames_dir = Path(tmp)
         _execffmpeg(ffmpeg_path, source, frames_dir, start, end)
-        imgseries2pdf(input_dir=frames_dir, output_dir=dest, pdf_filename=source.stem)
+        try:
+            imgseries2pdf(input_dir=frames_dir, output_dir=dest, pdf_filename=source.stem)
+        except FileNotFoundError:
+            _abort("No frames were extracted from the source video; check the start & end times.")
+
+
+def _abort(msg: str) -> t.NoReturn:
+    """Print the provided error message to stderr & exit the CLI with a non-zero exit code."""
+    typer.echo(f"Error: {msg}", err=True)
+    raise typer.Exit(code=1)
 
 
 def imgseries2pdf(
@@ -70,9 +79,14 @@ def imgseries2pdf(
     """
     Convert a series of images from `input_dir` to a PDF in the specified output directory.
 
-    If no `output_dir` is specified, the PDF is exported to `input_dir`
+    Images matching `image_format` are sorted by filename to determine page order. The PDF is saved
+    to `output_dir` as `<pdf_filename>.pdf`.
+
+    A `FileNotFoundError` is raised if no images matching `image_format` are found in `input_dir`.
     """
     imgseries = sorted(input_dir.glob(image_format))
+    if not imgseries:
+        raise FileNotFoundError(f"No images matching '{image_format}' found in '{input_dir}'")
 
     print(f"Loading {len(imgseries)} frames...")
     im = [Image.open(img) for img in tqdm(imgseries)]

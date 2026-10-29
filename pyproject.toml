@@ -11,7 +11,7 @@ authors = [
 readme = "README.md"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.11",
@@ -19,7 +19,6 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: 3.15",
-    "Typing :: Typed",
 ]
 
 requires-python = ">=3.11"
