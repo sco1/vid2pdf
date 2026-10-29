@@ -1,7 +1,7 @@
 import os
 import shutil
 import sys
-from collections import deque
+import tempfile
 from pathlib import Path
 
 import typer
@@ -27,7 +27,7 @@ vid2pdf_cli = typer.Typer(
 
 @vid2pdf_cli.command()
 def main_cli(
-    source: Path | None = typer.Argument(None, dir_okay=False, help="Source video"),
+    source: Path | None = typer.Argument(None, dir_okay=False, exists=True, help="Source video"),
     dest: Path | None = typer.Option(None, file_okay=False, help="Destination directory"),
     start: str | None = typer.Option(None, "-s", "--start", help="Start time (hh:mm:ss.sss)"),
     end: str | None = typer.Option(None, "-e", "--end", help="End time (hh:mm:ss.sss)"),
@@ -43,22 +43,22 @@ def main_cli(
     if not source:
         source = prompt_for_file("Select Source Video File")
 
-    # Create a separate directory for the frames
-    if not dest:
-        dest = source.parent
-
-    frames_dir = dest / "frames"
-    frames_dir.mkdir(parents=True, exist_ok=True)
-
     ffmpeg_path = _get_ffmpeg_exe()
     if not ffmpeg_path:
         raise FileNotFoundError(
             f"Could not find ffmpeg executable. Please add to: '{FFMPEG_PATH}' or your PATH"
         )
 
-    _execffmpeg(ffmpeg_path, source, frames_dir, start, end)
-    imgseries2pdf(input_dir=frames_dir, output_dir=dest, pdf_filename=source.stem)
-    _cleandir(frames_dir)
+    if not dest:
+        dest = source.parent
+    dest.mkdir(parents=True, exist_ok=True)
+
+    # Dump frames to a uniquely named temp directory alongside the output, so we can't collide with
+    # existing files & the frames are cleaned up even if conversion fails
+    with tempfile.TemporaryDirectory(prefix=".vid2pdf-frames-", dir=dest) as tmp:
+        frames_dir = Path(tmp)
+        _execffmpeg(ffmpeg_path, source, frames_dir, start, end)
+        imgseries2pdf(input_dir=frames_dir, output_dir=dest, pdf_filename=source.stem)
 
 
 def imgseries2pdf(
@@ -75,15 +75,17 @@ def imgseries2pdf(
     imgseries = sorted(input_dir.glob(image_format))
 
     print(f"Loading {len(imgseries)} frames...")
-    im = []
-    baseim = Image.open(imgseries[0])
-    for img in tqdm(imgseries[1:]):
-        im.append(Image.open(img))
+    im = [Image.open(img) for img in tqdm(imgseries)]
 
     print("Generating PDF ... ", end="")
     out_filepath = output_dir / f"{pdf_filename}.pdf"
-    baseim.save(out_filepath, "PDF", resolution=100.0, save_all=True, append_images=im)
-    print("done")
+    try:
+        im[0].save(out_filepath, "PDF", resolution=100.0, save_all=True, append_images=im[1:])
+        print("done")
+    finally:
+        # Explicitly release file handles so the source images can be removed (needed on Windows)
+        for img in im:
+            img.close()
 
 
 def _get_ffmpeg_exe(startdir: Path = FFMPEG_PATH) -> Path | None:
@@ -143,21 +145,6 @@ def _execffmpeg(
         str(ffmpeg_exe.resolve()), global_options=global_options, inputs=inputs, outputs=outputs
     )
     ff.run()
-
-
-def _cleandir(root_directory: Path) -> None:
-    """Recursively remove all files and subfolders in `root_directory`."""
-    dir_queue: deque[Path] = deque()  # Queue directories since we can't delete them if non-empty
-    for item in root_directory.rglob("*"):
-        if item.is_dir():
-            dir_queue.append(item)
-        else:
-            item.unlink()
-
-    for item in dir_queue:
-        item.rmdir()
-
-    root_directory.rmdir()
 
 
 if __name__ == "__main__":

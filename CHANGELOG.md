@@ -8,6 +8,8 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<ma
 
 ### Fixed
 * Fix default `/utils/ffmpeg` location resolving relative to the package directory rather than the project root
+* Intermediate frames are now written to a uniquely named temporary directory, rather than `<dest>/frames`
+* Intermediate frames are now cleaned up if conversion fails
 
 ## [v1.2.0]
 ### Added
