@@ -58,12 +58,6 @@ Options:
 <!-- [[[end]]] -->
 
 ### Standalone
-Standalone distribution using [Nuitka](https://github.com/Nuitka/Nuitka) is tested by this package. Due to the likelihood of false positives by AV scanners, prebuilt releases are not currently provided.
+Standalone builds of `vid2pdf` are not provided or supported, as they are frequently flagged as false positives by AV scanners.
 
-Note that Nuitka is provided as an optional dependency and can be installed by specifying the `build` dependency group when installing this project.
-
-Currently tested packaging paths are:
-  * `python -m nuitka ./vid2pdf/vid2pdf.py --mode=standalone --enable-plugin=tk-inter`
-  * `python -m nuitka ./vid2pdf/vid2pdf.py --mode=onefile --enable-plugin=tk-inter`
-
-For an alternative standalone option, I also maintain a UI-based Flutter version of `vid2pdf` at [sco1/vid2pdf-flutter](https://github.com/sco1/vid2pdf-flutter)
+For a standalone option, I also maintain a UI-based Flutter version of `vid2pdf` at [sco1/vid2pdf-flutter](https://github.com/sco1/vid2pdf-flutter)

@@ -54,11 +54,6 @@ dev = [
     "sco1-bumper~=2.0",
 ]
 
-[project.optional-dependencies]
-build = [
-    "nuitka~=2.7",
-]
-
 [tool.black]
 line-length = 100
 
