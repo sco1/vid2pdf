@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 from collections import deque
 from pathlib import Path
@@ -12,7 +13,7 @@ from tqdm import tqdm
 from vid2pdf.dialog import prompt_for_file
 
 load_dotenv()
-UTIL_BASE = Path(__file__).parent / "utils"
+UTIL_BASE = Path(__file__).parent.parent / "utils"
 FFMPEG_PATH = Path(os.environ.get("FFMPEG_PATH", UTIL_BASE / "ffmpeg"))
 
 CWD = Path()
@@ -51,7 +52,9 @@ def main_cli(
 
     ffmpeg_path = _get_ffmpeg_exe()
     if not ffmpeg_path:
-        raise FileNotFoundError(f"Could not find ffmpeg executable. Please add to: '{FFMPEG_PATH}'")
+        raise FileNotFoundError(
+            f"Could not find ffmpeg executable. Please add to: '{FFMPEG_PATH}' or your PATH"
+        )
 
     _execffmpeg(ffmpeg_path, source, frames_dir, start, end)
     imgseries2pdf(input_dir=frames_dir, output_dir=dest, pdf_filename=source.stem)
@@ -85,7 +88,12 @@ def imgseries2pdf(
 
 def _get_ffmpeg_exe(startdir: Path = FFMPEG_PATH) -> Path | None:
     """
-    Recursively search, starting from `startdir`, for the project's FFmpeg executable.
+    Locate an FFmpeg executable, starting from `startdir`.
+
+    The following locations are checked, in order:
+        1. `startdir` itself, if it points directly to a file
+        2. A recursive search below `startdir`
+        3. The system's `PATH`
 
     NOTE: On Windows, `ffmpeg.exe` is searched for. On unix-likes, `ffmpeg` is searched for instead.
     This search is case-sensitive on case-sensitive operating systems (i.e. not-Windows)
@@ -93,6 +101,9 @@ def _get_ffmpeg_exe(startdir: Path = FFMPEG_PATH) -> Path | None:
     NOTE: If multiple executables are found below the provided starting directory, the first
     executable encountered is returned.
     """
+    if startdir.is_file():
+        return startdir
+
     if sys.platform == "win32":
         pattern = "**/ffmpeg.exe"
     else:
@@ -102,8 +113,12 @@ def _get_ffmpeg_exe(startdir: Path = FFMPEG_PATH) -> Path | None:
 
     if ffmpeg_exe:
         return ffmpeg_exe[0]
-    else:
-        return None
+
+    on_path = shutil.which("ffmpeg")
+    if on_path:
+        return Path(on_path)
+
+    return None
 
 
 def _execffmpeg(

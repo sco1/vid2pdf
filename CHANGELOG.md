@@ -1,6 +1,14 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v1.3.0]
+### Added
+* `FFMPEG_PATH` may now point directly to the FFmpeg executable, in addition to a directory containing it
+* FFmpeg executable is now searched on the system's `PATH` if it is not found at `FFMPEG_PATH` or the default `/utils/ffmpeg` location
+
+### Fixed
+* Fix default `/utils/ffmpeg` location resolving relative to the package directory rather than the project root
+
 ## [v1.2.0]
 ### Added
 * Add support for locating FFMPEG installation via an `FFMPEG_PATH` environment variable

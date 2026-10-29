@@ -10,7 +10,7 @@ authors = [
 
 readme = "README.md"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
@@ -25,14 +25,14 @@ classifiers = [
 requires-python = ">=3.11"
 dependencies = [
     "ffmpy~=1.0",
-    "pillow~=12.0",
+    "pillow~=13.0",
     "python-dotenv~=1.1",
     "tqdm~=4.67",
     "typer~=0.24",
 ]
 
 [project.urls]
-Homepage = "https://github.com/sco1/"
+Homepage = "https://github.com/sco1/vid2pdf"
 Documentation = "https://github.com/sco1/vid2pdf/blob/main/README.md"
 Repository = "https://github.com/sco1/vid2pdf.git"
 Issues = "https://github.com/sco1/vid2pdf/issues"
