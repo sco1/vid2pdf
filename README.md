@@ -3,7 +3,7 @@
 </p>
 <h1 align="center"> vid2pdf </h1>
 
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/vid2pdf/1.2.0?logo=python&logoColor=FFD43B)](https://pypi.org/project/vid2pdf/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/vid2pdf/1.3.0?logo=python&logoColor=FFD43B)](https://pypi.org/project/vid2pdf/)
 [![PyPI](https://img.shields.io/pypi/v/vid2pdf?logo=Python&logoColor=FFD43B)](https://pypi.org/project/vid2pdf/)
 [![PyPI - License](https://img.shields.io/pypi/l/vid2pdf?color=magenta)](https://github.com/sco1/vid2pdf/blob/main/LICENSE)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/vid2pdf/main.svg)](https://results.pre-commit.ci/latest/github/sco1/vid2pdf/main)
