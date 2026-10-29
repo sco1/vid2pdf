@@ -3,7 +3,7 @@
 </p>
 <h1 align="center"> vid2pdf </h1>
 
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/vid2pdf/1.2.0?logo=python&logoColor=FFD43B)](https://pypi.org/project/vid2pdf/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/vid2pdf/1.3.0?logo=python&logoColor=FFD43B)](https://pypi.org/project/vid2pdf/)
 [![PyPI](https://img.shields.io/pypi/v/vid2pdf?logo=Python&logoColor=FFD43B)](https://pypi.org/project/vid2pdf/)
 [![PyPI - License](https://img.shields.io/pypi/l/vid2pdf?color=magenta)](https://github.com/sco1/vid2pdf/blob/main/LICENSE)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/vid2pdf/main.svg)](https://results.pre-commit.ci/latest/github/sco1/vid2pdf/main)
@@ -11,13 +11,15 @@
 Convert a video file into PDF image series.
 
 ## External Requirements
-`vid2pdf` requires ffmpeg to be extracted to the `/utils/ffmpeg` folder. The latest version of ffmpeg can be downloaded from [ffmpeg.org](https://www.ffmpeg.org/download.html).
+`vid2pdf` requires ffmpeg, the latest version of which can be downloaded from [ffmpeg.org](https://www.ffmpeg.org/download.html). The ffmpeg executable is located by checking, in order:
 
-The path to an existing ffmpeg installation can also be specified using an `FFMPEG_PATH` environment variable, either directly or by utilizing a `.env` file in this project's root.
+1. The `FFMPEG_PATH` environment variable, which may point to either the executable itself or a directory containing it; this can be set directly or by utilizing a `.env` file in this project's root
+2. The `/utils/ffmpeg` folder of this project (when running from a source checkout)
+3. Your system's `PATH`
 
 ## Installation
 ### Python
-Install from PyPi with your favorite `pip` invocation:
+Install from PyPI with your favorite `pip` invocation:
 
 ```bash
 $ pip install vid2pdf
@@ -56,12 +58,6 @@ Options:
 <!-- [[[end]]] -->
 
 ### Standalone
-Standalone distribution using [Nuitka](https://github.com/Nuitka/Nuitka) is tested by this package. Due to the likelihood of false positives by AV scanners, prebuilt releases are not currently provided.
+Standalone builds of `vid2pdf` are not provided or supported, as they are frequently flagged as false positives by AV scanners.
 
-Note that Nuitka is provided as an optional dependency and can be installed by specifying the `build` dependency group when installing this project.
-
-Currently tested packaging paths are:
-  * `python -m nuitka ./vid2pdf/vid2pdf.py --mode=standalone --enable-plugin=tk-inter`
-  * `python -m nuitka ./vid2pdf/vid2pdf.py --mode=onefile --enable-plugin=tk-inter`
-
-For an alternative standalone option, I also maintain a UI-based Flutter version of `vid2pdf` at [sco1/vid2pdf-flutter](https://github.com/sco1/vid2pdf-flutter)
+For a standalone option, I also maintain a UI-based Flutter version of `vid2pdf` at [sco1/vid2pdf-flutter](https://github.com/sco1/vid2pdf-flutter)

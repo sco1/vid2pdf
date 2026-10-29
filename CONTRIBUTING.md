@@ -9,7 +9,7 @@ This project uses [uv](https://docs.astral.sh/uv) to manage dependencies. With y
 
 ```bash
 $ uv venv
-$ uv sync --all-extras --dev
+$ uv sync --dev
 ```
 
 A [`pre-commit`](https://pre-commit.com) configuration is also provided to create a pre-commit hook so linting errors aren't committed:

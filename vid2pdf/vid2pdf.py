@@ -1,6 +1,8 @@
 import os
+import shutil
 import sys
-from collections import deque
+import tempfile
+import typing as t
 from pathlib import Path
 
 import typer
@@ -12,10 +14,8 @@ from tqdm import tqdm
 from vid2pdf.dialog import prompt_for_file
 
 load_dotenv()
-UTIL_BASE = Path(__file__).parent / "utils"
+UTIL_BASE = Path(__file__).parent.parent / "utils"
 FFMPEG_PATH = Path(os.environ.get("FFMPEG_PATH", UTIL_BASE / "ffmpeg"))
-
-CWD = Path()
 
 
 vid2pdf_cli = typer.Typer(
@@ -26,7 +26,7 @@ vid2pdf_cli = typer.Typer(
 
 @vid2pdf_cli.command()
 def main_cli(
-    source: Path | None = typer.Argument(None, dir_okay=False, help="Source video"),
+    source: Path | None = typer.Argument(None, dir_okay=False, exists=True, help="Source video"),
     dest: Path | None = typer.Option(None, file_okay=False, help="Destination directory"),
     start: str | None = typer.Option(None, "-s", "--start", help="Start time (hh:mm:ss.sss)"),
     end: str | None = typer.Option(None, "-e", "--end", help="End time (hh:mm:ss.sss)"),
@@ -40,22 +40,34 @@ def main_cli(
     Start and end arguments may be left empty to use the start and end of the video, respectively.
     """
     if not source:
-        source = prompt_for_file("Select Source Video File")
-
-    # Create a separate directory for the frames
-    if not dest:
-        dest = source.parent
-
-    frames_dir = dest / "frames"
-    frames_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            source = prompt_for_file("Select Source Video File")
+        except ValueError:
+            _abort("No source video selected.")
 
     ffmpeg_path = _get_ffmpeg_exe()
     if not ffmpeg_path:
-        raise FileNotFoundError(f"Could not find ffmpeg executable. Please add to: '{FFMPEG_PATH}'")
+        _abort(f"Could not find ffmpeg executable. Please add to: '{FFMPEG_PATH}' or your PATH")
 
-    _execffmpeg(ffmpeg_path, source, frames_dir, start, end)
-    imgseries2pdf(input_dir=frames_dir, output_dir=dest, pdf_filename=source.stem)
-    _cleandir(frames_dir)
+    if not dest:
+        dest = source.parent
+    dest.mkdir(parents=True, exist_ok=True)
+
+    # Dump frames to a uniquely named temp directory alongside the output, so we can't collide with
+    # existing files & the frames are cleaned up even if conversion fails
+    with tempfile.TemporaryDirectory(prefix=".vid2pdf-frames-", dir=dest) as tmp:
+        frames_dir = Path(tmp)
+        _execffmpeg(ffmpeg_path, source, frames_dir, start, end)
+        try:
+            imgseries2pdf(input_dir=frames_dir, output_dir=dest, pdf_filename=source.stem)
+        except FileNotFoundError:
+            _abort("No frames were extracted from the source video; check the start & end times.")
+
+
+def _abort(msg: str) -> t.NoReturn:
+    """Print the provided error message to stderr & exit the CLI with a non-zero exit code."""
+    typer.echo(f"Error: {msg}", err=True)
+    raise typer.Exit(code=1)
 
 
 def imgseries2pdf(
@@ -67,25 +79,37 @@ def imgseries2pdf(
     """
     Convert a series of images from `input_dir` to a PDF in the specified output directory.
 
-    If no `output_dir` is specified, the PDF is exported to `input_dir`
+    Images matching `image_format` are sorted by filename to determine page order. The PDF is saved
+    to `output_dir` as `<pdf_filename>.pdf`.
+
+    A `FileNotFoundError` is raised if no images matching `image_format` are found in `input_dir`.
     """
     imgseries = sorted(input_dir.glob(image_format))
+    if not imgseries:
+        raise FileNotFoundError(f"No images matching '{image_format}' found in '{input_dir}'")
 
     print(f"Loading {len(imgseries)} frames...")
-    im = []
-    baseim = Image.open(imgseries[0])
-    for img in tqdm(imgseries[1:]):
-        im.append(Image.open(img))
+    im = [Image.open(img) for img in tqdm(imgseries)]
 
     print("Generating PDF ... ", end="")
     out_filepath = output_dir / f"{pdf_filename}.pdf"
-    baseim.save(out_filepath, "PDF", resolution=100.0, save_all=True, append_images=im)
-    print("done")
+    try:
+        im[0].save(out_filepath, "PDF", resolution=100.0, save_all=True, append_images=im[1:])
+        print("done")
+    finally:
+        # Explicitly release file handles so the source images can be removed (needed on Windows)
+        for img in im:
+            img.close()
 
 
 def _get_ffmpeg_exe(startdir: Path = FFMPEG_PATH) -> Path | None:
     """
-    Recursively search, starting from `startdir`, for the project's FFmpeg executable.
+    Locate an FFmpeg executable, starting from `startdir`.
+
+    The following locations are checked, in order:
+        1. `startdir` itself, if it points directly to a file
+        2. A recursive search below `startdir`
+        3. The system's `PATH`
 
     NOTE: On Windows, `ffmpeg.exe` is searched for. On unix-likes, `ffmpeg` is searched for instead.
     This search is case-sensitive on case-sensitive operating systems (i.e. not-Windows)
@@ -93,6 +117,9 @@ def _get_ffmpeg_exe(startdir: Path = FFMPEG_PATH) -> Path | None:
     NOTE: If multiple executables are found below the provided starting directory, the first
     executable encountered is returned.
     """
+    if startdir.is_file():
+        return startdir
+
     if sys.platform == "win32":
         pattern = "**/ffmpeg.exe"
     else:
@@ -102,8 +129,12 @@ def _get_ffmpeg_exe(startdir: Path = FFMPEG_PATH) -> Path | None:
 
     if ffmpeg_exe:
         return ffmpeg_exe[0]
-    else:
-        return None
+
+    on_path = shutil.which("ffmpeg")
+    if on_path:
+        return Path(on_path)
+
+    return None
 
 
 def _execffmpeg(
@@ -128,21 +159,6 @@ def _execffmpeg(
         str(ffmpeg_exe.resolve()), global_options=global_options, inputs=inputs, outputs=outputs
     )
     ff.run()
-
-
-def _cleandir(root_directory: Path) -> None:
-    """Recursively remove all files and subfolders in `root_directory`."""
-    dir_queue: deque[Path] = deque()  # Queue directories since we can't delete them if non-empty
-    for item in root_directory.rglob("*"):
-        if item.is_dir():
-            dir_queue.append(item)
-        else:
-            item.unlink()
-
-    for item in dir_queue:
-        item.rmdir()
-
-    root_directory.rmdir()
 
 
 if __name__ == "__main__":
